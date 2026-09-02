@@ -24,6 +24,7 @@ switch( $cAction ) {
 	case 'verificar_sat':     $result = VerificarSat();     break;
 	case 'verificar_sat_one': $result = VerificarSatOne();  break;
 	case 'limpiar_estado':    $result = LimpiarEstado();    break;
+	case 'get_xml':           $result = GetXml();           break;
 	default:               $result = [ 'result' => false, 'message' => 'Acción no válida' ];
 }
 
@@ -234,6 +235,7 @@ function GuardarDbFiles() {
 
 		$sql = "INSERT INTO xml_importados SET
 			archivo           = '" . $oMysql->escape($registro['archivo']) . "',
+			xml_content       = '" . $oMysql->escape($contenido) . "',
 			uuid              = '" . $oMysql->escape($registro['uuid']) . "',
 			version           = '" . $oMysql->escape($registro['version']) . "',
 			serie             = '" . $oMysql->escape($registro['serie']) . "',
@@ -498,6 +500,7 @@ function GuardarDb() {
 
 		$sql = "INSERT INTO xml_importados SET
 			archivo           = '" . $oMysql->escape($registro['archivo']) . "',
+			xml_content       = '" . $oMysql->escape($contenido) . "',
 			uuid              = '" . $oMysql->escape($registro['uuid']) . "',
 			version           = '" . $oMysql->escape($registro['version']) . "',
 			serie             = '" . $oMysql->escape($registro['serie']) . "',
@@ -745,5 +748,42 @@ function LimpiarEstado() {
 	$oMysql->getConnection()->autocommit(true);
 	$oMysql->query("UPDATE xml_importados SET estado = NULL");
 	return [ 'result' => true, 'message' => 'Estado limpiado. Todos los registros listos para re-verificar.' ];
+}
+
+function GetXml() {
+	$id = (int)filter_post('id');
+	if ( $id <= 0 ) {
+		return [ 'result' => false, 'message' => 'ID no válido' ];
+	}
+
+	$oMysql = create_conex();
+	$mysqli = $oMysql->getConnection();
+	$res = $mysqli->query("SELECT xml_content FROM xml_importados WHERE id = " . $id);
+	if ( !$res ) {
+		return [ 'result' => false, 'message' => 'Error al consultar' ];
+	}
+	$row = $res->fetch_assoc();
+	$res->free();
+	$oMysql->Close();
+
+	if ( !$row || empty($row['xml_content']) ) {
+		return [ 'result' => false, 'message' => 'No se encontro el XML para este registro' ];
+	}
+
+	$xmlFormateado = formatXml($row['xml_content']);
+	return [ 'result' => true, 'xml' => $xmlFormateado ];
+}
+
+function formatXml($xml) {
+	$xml = trim($xml);
+	if ( empty($xml) ) return $xml;
+
+	$dom = new DOMDocument();
+	$dom->preserveWhiteSpace = false;
+	$dom->formatOutput = true;
+	if ( @$dom->loadXML($xml) === false ) {
+		return $xml;
+	}
+	return $dom->saveXML();
 }
 ?>

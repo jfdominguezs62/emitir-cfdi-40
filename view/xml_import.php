@@ -113,6 +113,7 @@ $esConsultor = esConsultor();
         <button class="btn btn-outline-secondary btn-sm" onclick="limpiarFiltros()"><i class="fas fa-times me-1"></i>Limpiar</button>
         <button class="btn btn-outline-success btn-sm" onclick="exportarExcel()"><i class="fas fa-file-excel me-1"></i>Exportar</button>
         <button class="btn btn-outline-primary btn-sm" onclick="imprimirCfdi()"><i class="fas fa-print me-1"></i>Imprimir</button>
+        <button class="btn btn-outline-dark btn-sm" onclick="verXml()"><i class="fas fa-code me-1"></i>Ver XML</button>
         <button class="btn btn-outline-info btn-sm" onclick="toggleColumnas()"><i class="fas fa-columns me-1"></i>Columnas</button>
       </div>
     </div>
@@ -832,6 +833,35 @@ function imprimirCfdi() {
   var w = window.open('', '_blank', 'width=900,height=700');
   w.document.write(html);
   w.document.close();
+}
+
+/* ---- Ver XML ---- */
+function verXml() {
+  var sel = $('#tabla-xml').bootstrapTable('getSelections');
+  if (!sel || sel.length === 0) {
+    MsgNotify('Seleccione un registro para ver el XML', 'warning');
+    return;
+  }
+  var r = sel[0];
+  if (!r.id) {
+    MsgNotify('El registro no tiene ID (no esta guardado en BD)', 'warning');
+    return;
+  }
+
+  MsgServer(path.model + 'xml_reader.php', function(dat) {
+    if (!dat.result || !dat.xml) {
+      MsgNotify(dat.message || 'No se pudo obtener el XML', 'error');
+      return;
+    }
+    var w = window.open('', '_blank', 'width=900,height=700');
+    w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>XML - ' + (r.uuid || '') + '</title>');
+    w.document.write('<style>body{font-family:"Courier New",monospace;font-size:12px;margin:20px;white-space:pre-wrap;background:#f8f9fa;} h3{font-family:Arial;color:#0d47a1;border-bottom:2px solid #0d47a1;padding-bottom:5px;} .copy-btn{position:fixed;top:10px;right:10px;padding:8px 16px;background:#0d47a1;color:white;border:none;border-radius:6px;cursor:pointer;font-size:13px;z-index:99;} .copy-btn:hover{background:#1565c0;} pre{margin:0;}</style></head><body>');
+    w.document.write('<h3>CFDI XML - ' + (r.uuid || '') + '</h3>');
+    w.document.write('<button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById(\'xml-code\').textContent).then(function(){alert(\'XML copiado!\')})"><i class=\"fas fa-copy\"></i> Copiar XML</button>');
+    w.document.write('<pre id="xml-code">' + dat.xml.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</pre>');
+    w.document.write('</body></html>');
+    w.document.close();
+  }, { action: 'get_xml', id: r.id });
 }
 
 $(function() {
