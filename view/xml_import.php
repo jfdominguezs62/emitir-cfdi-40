@@ -112,6 +112,7 @@ $esConsultor = esConsultor();
       <div class="col-md-3 d-flex gap-1">
         <button class="btn btn-outline-secondary btn-sm" onclick="limpiarFiltros()"><i class="fas fa-times me-1"></i>Limpiar</button>
         <button class="btn btn-outline-success btn-sm" onclick="exportarExcel()"><i class="fas fa-file-excel me-1"></i>Exportar</button>
+        <button class="btn btn-outline-primary btn-sm" onclick="imprimirCfdi()"><i class="fas fa-print me-1"></i>Imprimir</button>
         <button class="btn btn-outline-info btn-sm" onclick="toggleColumnas()"><i class="fas fa-columns me-1"></i>Columnas</button>
       </div>
     </div>
@@ -698,6 +699,139 @@ function exportarExcel() {
   a.href = path.model + 'export_excel.php?action=exportar_excel';
   a.target = '_blank';
   a.click();
+}
+
+/* ---- Imprimir CFDI ---- */
+function imprimirCfdi() {
+  var sel = $('#tabla-xml').bootstrapTable('getSelections');
+  if (!sel || sel.length === 0) {
+    MsgNotify('Seleccione un registro para imprimir', 'warning');
+    return;
+  }
+  var r = sel[0];
+
+  var estado = r.estado || '';
+  var estadoColor = '#666';
+  if (estado === 'VIGENTE') estadoColor = '#198754';
+  else if (estado === 'CANCELADO') estadoColor = '#dc3545';
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">';
+  html += '<title>CFDI 4.0 - Folio Fiscal: ' + (r.uuid || '') + '</title>';
+  html += '<style>';
+  html += '* { box-sizing: border-box; margin: 0; padding: 0; }';
+  html += 'body { font-family: Arial, Helvetica, sans-serif; font-size: 10px; color: #333; background: #fff; }';
+  html += '.page { width: 210mm; margin: 10mm auto; padding: 8mm; }';
+  html += '.sat-header { text-align: center; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 2px solid #0066cc; }';
+  html += '.sat-header img { height: 28px; }';
+  html += '.sat-header h1 { font-size: 9px; color: #0066cc; margin-top: 2px; letter-spacing: 0.5px; }';
+  html += '.sat-header p { font-size: 8px; color: #666; }';
+  html += '.cols { display: flex; gap: 10px; margin-bottom: 6px; }';
+  html += '.col-left { flex: 1; }';
+  html += '.col-right { flex: 1; }';
+  html += '.section { border: 1px solid #ccc; border-radius: 4px; margin-bottom: 6px; padding: 6px; }';
+  html += '.section-title { font-size: 9px; font-weight: bold; color: #0066cc; text-transform: uppercase; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 2px; }';
+  html += '.field { display: flex; margin-bottom: 2px; }';
+  html += '.field-label { font-weight: bold; min-width: 110px; color: #555; }';
+  html += '.field-value { color: #333; }';
+  html += '.uuid-box { text-align: center; border: 2px solid #0066cc; border-radius: 6px; padding: 8px; margin: 8px 0; background: #f0f7ff; }';
+  html += '.uuid-box .label { font-size: 8px; color: #666; text-transform: uppercase; letter-spacing: 1px; }';
+  html += '.uuid-box .value { font-size: 11px; font-weight: bold; color: #0066cc; letter-spacing: 1px; margin-top: 2px; }';
+  html += '.totales-table { width: 100%; border-collapse: collapse; margin-top: 6px; }';
+  html += '.totales-table td { padding: 3px 6px; border-bottom: 1px solid #eee; }';
+  html += '.totales-table td:last-child { text-align: right; font-weight: bold; }';
+  html += '.totales-table tr.total-final td { border-top: 2px solid #0066cc; font-size: 12px; color: #0066cc; }';
+  html += '.estado-box { text-align: center; margin: 8px 0; padding: 6px; border: 2px solid ' + estadoColor + '; border-radius: 4px; }';
+  html += '.estado-box span { font-size: 11px; font-weight: bold; color: ' + estadoColor + '; }';
+  html += '.footer { text-align: center; font-size: 7px; color: #999; margin-top: 10px; border-top: 1px solid #ddd; padding-top: 5px; }';
+  html += '@media print { .page { margin: 5mm; width: 100%; } body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }';
+  html += '</style></head><body>';
+
+  html += '<div class="page">';
+
+  html += '<div class="sat-header">';
+  html += '<h1>COMPROBANTE FISCAL DIGITAL POR INTERNET</h1>';
+  html += '<p>CFDI Versión 4.0</p>';
+  html += '</div>';
+
+  html += '<div class="uuid-box">';
+  html += '<div class="label">Folio Fiscal</div>';
+  html += '<div class="value">' + (r.uuid || '') + '</div>';
+  html += '</div>';
+
+  html += '<div class="cols">';
+
+  html += '<div class="col-left">';
+  html += '<div class="section">';
+  html += '<div class="section-title">Emisor</div>';
+  html += '<div class="field"><span class="field-label">RFC:</span><span class="field-value">' + (r.emisor_rfc || '') + '</span></div>';
+  html += '<div class="field"><span class="field-label">Nombre:</span><span class="field-value">' + (r.emisor_nombre || '') + '</span></div>';
+  html += '<div class="field"><span class="field-label">Régimen fiscal:</span><span class="field-value">' + (r.emisor_regimen || '') + '</span></div>';
+  html += '</div>';
+  html += '</div>';
+
+  html += '<div class="col-right">';
+  html += '<div class="section">';
+  html += '<div class="section-title">Receptor</div>';
+  html += '<div class="field"><span class="field-label">RFC:</span><span class="field-value">' + (r.receptor_rfc || '') + '</span></div>';
+  html += '<div class="field"><span class="field-label">Nombre:</span><span class="field-value">' + (r.receptor_nombre || '') + '</span></div>';
+  html += '<div class="field"><span class="field-label">Régimen fiscal receptor:</span><span class="field-value">' + (r.receptor_regimen || '') + '</span></div>';
+  html += '<div class="field"><span class="field-label">Uso CFDI:</span><span class="field-value">' + (r.receptor_uso_cfdi || '') + '</span></div>';
+  html += '</div>';
+  html += '</div>';
+
+  html += '</div>';
+
+  html += '<div class="section">';
+  html += '<div class="section-title">Comprobante</div>';
+  html += '<div class="cols">';
+  html += '<div class="col-left">';
+  html += '<div class="field"><span class="field-label">Lugar de expedición:</span><span class="field-value">' + (r.lugar_expedicion || '') + '</span></div>';
+  html += '<div class="field"><span class="field-label">Fecha y hora:</span><span class="field-value">' + (r.fecha || '') + '</span></div>';
+  html += '<div class="field"><span class="field-label">Folio:</span><span class="field-value">' + (r.serie || '') + ' ' + (r.folio || '') + '</span></div>';
+  html += '<div class="field"><span class="field-label">No. certificado:</span><span class="field-value">' + (r.no_certificado || '') + '</span></div>';
+  html += '</div>';
+  html += '<div class="col-right">';
+  html += '<div class="field"><span class="field-label">Forma de pago:</span><span class="field-value">' + (r.forma_pago || '') + '</span></div>';
+  html += '<div class="field"><span class="field-label">Método de pago:</span><span class="field-value">' + (r.metodo_pago || '') + '</span></div>';
+  html += '<div class="field"><span class="field-label">Tipo de comprobante:</span><span class="field-value">' + (r.tipo_comprobante || '') + '</span></div>';
+  html += '<div class="field"><span class="field-label">Moneda:</span><span class="field-value">' + (r.moneda || '') + '</span></div>';
+  html += '<div class="field"><span class="field-label">Exportación:</span><span class="field-value">01</span></div>';
+  if (r.es_global == 1) {
+    html += '<div class="field"><span class="field-label">Periodicidad:</span><span class="field-value">' + (r.periodicidad || '') + '</span></div>';
+    html += '<div class="field"><span class="field-label">Meses:</span><span class="field-value">' + (r.meses || '') + '</span></div>';
+    html += '<div class="field"><span class="field-label">Año:</span><span class="field-value">' + (r.anio || '') + '</span></div>';
+  }
+  html += '</div></div></div>';
+
+  html += '<div class="section">';
+  html += '<div class="section-title">Importes</div>';
+  html += '<table class="totales-table">';
+  html += '<tr><td>Subtotal</td><td>$' + parseFloat(r.subtotal||0).toFixed(2) + '</td></tr>';
+  html += '<tr><td>Descuento</td><td>$' + parseFloat(r.descuento||0).toFixed(2) + '</td></tr>';
+  html += '<tr><td>IVA 16% Trasladado</td><td>$' + parseFloat(r.impuestos_traslados||0).toFixed(2) + '</td></tr>';
+  html += '<tr><td>IVA Retenido</td><td>$' + parseFloat(r.impuestos_retenidos||0).toFixed(2) + '</td></tr>';
+  html += '<tr><td>IVA Neto</td><td>$' + parseFloat(r.iva_neto||0).toFixed(2) + '</td></tr>';
+  html += '<tr class="total-final"><td>TOTAL</td><td>$' + parseFloat(r.total||0).toFixed(2) + '</td></tr>';
+  html += '</table></div>';
+
+  html += '<div class="estado-box">';
+  html += '<span>Estado ante el SAT: ' + (estado || 'SIN VERIFICAR') + '</span>';
+  html += '</div>';
+
+  html += '<div class="footer">';
+  html += 'Este documento es una representación impresa de un Comprobante Fiscal Digital por Internet (CFDI).<br>';
+  html += 'Para su verificación consulte en la página del SAT: https://verificacfdi.facturaelectronica.sat.gob.mx/<br>';
+  html += 'Sistema de Emisión CFDI 4.0';
+  html += '</div>';
+
+  html += '</div>';
+
+  html += '<script>window.onload = function(){ window.print(); }<\/script>';
+  html += '</body></html>';
+
+  var w = window.open('', '_blank', 'width=900,height=700');
+  w.document.write(html);
+  w.document.close();
 }
 
 $(function() {
