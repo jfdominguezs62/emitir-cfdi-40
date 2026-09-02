@@ -1,0 +1,24 @@
+<?php
+if ( ! class_exists("Constants") ) {
+  include( 'constants.php' );
+}	
+
+include( Constants::getpath_tweb() . 'tmysql.php' );
+
+define( 'DB_HOST',      "localhost" );
+define( 'DB_DATABASE',  "emitircfdi_db");
+define( 'DB_USER',      "root");
+define( 'DB_PASSWORD',  "");
+define( 'DB_PORT', 3306 );
+
+define( "TABLA_USUARIOS",  "users" );
+define( "TABLA_CLIENTES",  "clientes" );
+define( "TABLA_FACTURAS",  "facturas" );
+define( "TABLA_CONCEPTOS", "factura_conceptos" );
+define( "TABLA_EMISOR",    "emisor_config" );
+define( "TABLA_SERIES",    "series" );
+
+function create_conex( $host = DB_HOST, $user = DB_USER, $pass = DB_PASSWORD, $database = DB_DATABASE ) {  
+  return new TMySQL( $host, $user, $pass, $database );
+}
+?>

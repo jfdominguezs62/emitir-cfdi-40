@@ -1,0 +1,19 @@
+# Dependencies
+/vendor/
+/node_modules/
+
+# IDE
+/.idea/
+/.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+
+# Config (contains DB credentials)
+config_db.php
