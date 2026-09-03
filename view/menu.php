@@ -99,6 +99,8 @@ $rolUsuario = $oSession->GetVar('rol') ?: 'operador';
             </a>
           </div>
 
+          <?php } ?>
+
           <div class="col-md-4 mb-3">
             <a href="xml_import.php" class="text-decoration-none">
               <div class="card border-0 shadow-sm h-100 text-center" style="border-radius: 16px; transition: transform .2s;"
@@ -113,7 +115,6 @@ $rolUsuario = $oSession->GetVar('rol') ?: 'operador';
               </div>
             </a>
           </div>
-          <?php } ?>
 
           <div class="col-md-4 mb-3">
             <a href="reportes.php" class="text-decoration-none">

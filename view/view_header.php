@@ -31,8 +31,8 @@ $oWeb->Activate();
       <?php if ($rolUsuario !== 'consultor') { ?>
       <li class="nav-item"><a class="nav-link <?php echo $currentPage==='clientes'?'active':''; ?>" href="clientes.php"><i class="fas fa-address-book me-1"></i>Clientes</a></li>
       <li class="nav-item"><a class="nav-link <?php echo $currentPage==='facturas'?'active':''; ?>" href="facturas.php"><i class="fas fa-file-invoice me-1"></i>Facturas</a></li>
-      <li class="nav-item"><a class="nav-link <?php echo $currentPage==='xml_import'?'active':''; ?>" href="xml_import.php"><i class="fas fa-file-import me-1"></i>Importar XML</a></li>
       <?php } ?>
+      <li class="nav-item"><a class="nav-link <?php echo $currentPage==='xml_import'?'active':''; ?>" href="xml_import.php"><i class="fas fa-file-import me-1"></i>Importar XML</a></li>
       <li class="nav-item"><a class="nav-link <?php echo $currentPage==='reportes'?'active':''; ?>" href="reportes.php"><i class="fas fa-chart-bar me-1"></i>Reportes</a></li>
       <li class="nav-item"><a class="nav-link <?php echo $currentPage==='cfdi_cierres'?'active':''; ?>" href="cfdi_cierres.php"><i class="fas fa-calendar-check me-1"></i>Cierres</a></li>
       <?php if ($rolUsuario === 'admin') { ?>

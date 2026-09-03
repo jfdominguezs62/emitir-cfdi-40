@@ -123,6 +123,7 @@ $esConsultor = esConsultor();
         <button class="btn btn-sm btn-primary fw-bold" onclick="guardarDb()" id="btn-guardar-db">
           <i class="fas fa-database me-1"></i>Guardar en BD
         </button>
+        <?php } ?>
         <div class="input-group input-group-sm" style="width:auto;">
           <span class="input-group-text">Desde</span>
           <input type="date" class="form-control" id="cargar-desde" style="width:140px;">
@@ -132,16 +133,17 @@ $esConsultor = esConsultor();
             <i class="fas fa-sync me-1"></i>Cargar desde BD
           </button>
         </div>
+        <?php if (!$esConsultor) { ?>
         <button class="btn btn-sm btn-outline-danger" onclick="eliminarTodosDb()" title="Eliminar todos los registros de BD">
           <i class="fas fa-trash me-1"></i>Limpiar BD
         </button>
+        <?php } ?>
         <button class="btn btn-sm btn-outline-warning fw-bold" onclick="verificarSat()" id="btn-verificar-sat" title="Verificar estado ante el SAT">
           <i class="fas fa-shield-alt me-1"></i>Verificar SAT
         </button>
         <button class="btn btn-sm btn-outline-secondary" onclick="limpiarEstado()" title="Limpiar estados para re-verificar">
           <i class="fas fa-eraser me-1"></i>Limpiar Estado
         </button>
-        <?php } ?>
       </div>
     </div>
   </div>
