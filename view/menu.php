@@ -116,6 +116,23 @@ $rolUsuario = $oSession->GetVar('rol') ?: 'operador';
             </a>
           </div>
 
+          <?php if ($rolUsuario !== 'consultor') { ?>
+          <div class="col-md-4 mb-3">
+            <a href="descarga_sat.php" class="text-decoration-none">
+              <div class="card border-0 shadow-sm h-100 text-center" style="border-radius: 16px; transition: transform .2s;"
+                   onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+                <div class="card-body p-4">
+                  <div class="rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width: 65px; height: 65px; background: linear-gradient(135deg, #1a237e, #283593);">
+                    <i class="fas fa-cloud-download-alt text-white" style="font-size: 28px;"></i>
+                  </div>
+                  <h5 class="fw-bold text-dark">Descarga SAT</h5>
+                  <small class="text-muted">Descarga masiva de CFDI</small>
+                </div>
+              </div>
+            </a>
+          </div>
+          <?php } ?>
+
           <div class="col-md-4 mb-3">
             <a href="reportes.php" class="text-decoration-none">
               <div class="card border-0 shadow-sm h-100 text-center" style="border-radius: 16px; transition: transform .2s;"

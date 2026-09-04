@@ -246,13 +246,6 @@ function getColumns() {
       col.align = 'center';
       col.width = 150;
       col.formatter = function(v, r) {
-        if (USER_ROL === 'consultor') {
-          if (!v) return '<span class="badge bg-secondary">Sin verificar</span>';
-          if (v === 'VIGENTE') return '<span class="badge bg-success">Vigente</span>';
-          if (v === 'CANCELADO') return '<span class="badge bg-danger">Cancelado</span>';
-          if (v === 'No Encontrado') return '<span class="badge bg-info text-dark">No encontrado</span>';
-          return '<span class="badge bg-warning text-dark">' + v + '</span>';
-        }
         var cls = 'secondary';
         var txt = 'Sin verificar';
         if (v === 'VIGENTE') { cls = 'success'; txt = 'Vigente'; }

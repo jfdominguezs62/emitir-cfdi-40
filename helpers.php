@@ -2,6 +2,7 @@
 
 function tieneRol( $rolRequerido ) {
 	$oSession = new TSession( APP_SESSION );
+	$oSession->lExeError = false;
 	$rol = $oSession->GetVar('rol');
 	if ( empty($rol) ) $rol = 'operador';
 
@@ -13,6 +14,7 @@ function tieneRol( $rolRequerido ) {
 
 function rolUsuario() {
 	$oSession = new TSession( APP_SESSION );
+	$oSession->lExeError = false;
 	$rol = $oSession->GetVar('rol');
 	return $rol ?: 'operador';
 }
