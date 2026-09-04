@@ -187,3 +187,5 @@ function poblarCierres() {
 
 $(function() { cargarCierres(); });
 </script>
+
+<?php include('view_footer.php'); ?>

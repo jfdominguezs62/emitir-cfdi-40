@@ -330,3 +330,5 @@ function verDetalle(periodo) {
 </script>
 
 </div>
+
+<?php include('view_footer.php'); ?>

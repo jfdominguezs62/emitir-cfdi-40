@@ -190,4 +190,4 @@ $(function(){ cargarUsuarios(); });
 
 </div>
 
-<?php $oWeb->End(); ?>
+<?php include('view_footer.php'); ?>
